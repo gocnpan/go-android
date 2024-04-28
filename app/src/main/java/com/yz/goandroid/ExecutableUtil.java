@@ -15,7 +15,7 @@ import java.io.InputStreamReader;
 public class ExecutableUtil {
 
     private static final String TAG = "ExecutableUtil";
-    private static final String EXECUTABLE_NAME = "android.armv7a"; // 替换为你的可执行文件名
+    private static final String EXECUTABLE_NAME = "android.x86_64"; // 替换为你的可执行文件名
     private static final String TMP_ROOT = "/data/local/tmp"; // 可改变权限的tmp dir
 //    private static final String EXECUTABLE_ROOT = "/data/local/tmp/yz"; // 目录
     private static String EXECUTABLE_PATH = TMP_ROOT + "/" + EXECUTABLE_NAME; // 执行程序
@@ -31,6 +31,8 @@ public class ExecutableUtil {
             if (!data.exists()){
                 Log.i(TAG,"data不存在: "+executable_data_dir);
                 return;
+            } else{
+                Log.i(TAG, "已创建程序data目录");
             }
 
             // 复制assets目录下的可执行文件到设备的内部存储
@@ -56,10 +58,10 @@ public class ExecutableUtil {
 
     // 复制assets目录下的可执行文件到设备的内部存储
     private static void copyExecutableFromAssetsToInternalStorage(Context context) throws IOException {
-        Log.i(TAG, "开始复制文件");
         // 检查文件是否已经存在
         File outputFile = new File(EXECUTABLE_PATH);
         if (!outputFile.exists()) {
+            Log.i(TAG, "开始复制文件");
             // 从assets复制到内部存储
             InputStream fis = context.getAssets().open(EXECUTABLE_NAME);
             // FileInputStream fis = new FileInputStream();
@@ -72,20 +74,22 @@ public class ExecutableUtil {
             fos.flush();
             fos.close();
             fis.close();
+            Log.i(TAG,"可执行文件复制完成: " + EXECUTABLE_PATH);
+        } else{
+            Log.i(TAG, "文件已存在");
         }
-        Log.i(TAG,"可执行文件复制完成: " + EXECUTABLE_PATH);
     }
 
     // 执行权限
     private static void makeExecutable(String path) throws IOException {
         Log.i(TAG, "开始授权");
         // 设置可执行权限
-        String command = "chmod 755 " + path;
+        String command = "chmod 777 " + path;
         DataOutputStream os = new DataOutputStream(Runtime.getRuntime().exec("sh").getOutputStream());
         os.writeBytes(command);
         os.flush();
         os.close();
-        Log.i(TAG, "权限: "+path);
+        Log.i(TAG, "授予权限: "+path);
     }
 
     // 创建文件夹

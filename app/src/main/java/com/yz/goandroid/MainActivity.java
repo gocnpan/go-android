@@ -17,6 +17,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -66,6 +67,9 @@ public class MainActivity extends AppCompatActivity {
                 } else{
                     Toast.makeText(MainActivity.this, "已完成外部文件夹访问授权", Toast.LENGTH_SHORT).show();
                 }
+
+                // 判断并获取 root 权限
+                CommandExecution.getRoot(MainActivity.this);
             }
         });
 
@@ -121,6 +125,17 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, "请求api出错：", e);
 
             Toast.makeText(MainActivity.this, "获取本地服务出错: " + e, Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void doSU() {
+        try {
+            // 获取 root 权限
+            Process process = Runtime.getRuntime().exec("su");// (这里执行是系统已经开放了root权限，而不是说通过执行这句来获得root权限)
+            DataOutputStream os = new DataOutputStream(process.getOutputStream());
+            os.writeBytes("exit\n");
+            os.flush();
+        } catch (IOException e) {
+            Log.e(TAG, "获取su权限出错：", e);
         }
     }
 }
