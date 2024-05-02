@@ -48,15 +48,15 @@ public class ExecutableUtil {
             }
 
             // 使可执行文件具有执行权限
-            makeExecutable(executable_path);
+             makeExecutable(executable_path);
 
 
             // 执行可执行文件
             executeCommand(executable_path);
 
         } catch (IOException | InterruptedException e) {
+            Log.e(TAG, "执行程序出现错误", e);
             Toast.makeText(context, "出现错误: `" + e, Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "Error executing the executable", e);
         }
     }
 

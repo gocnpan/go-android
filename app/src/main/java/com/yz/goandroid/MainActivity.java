@@ -1,6 +1,8 @@
 package com.yz.goandroid;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -13,6 +15,8 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -34,7 +38,8 @@ public class MainActivity extends AppCompatActivity {
     private Button btnCheck;
 
     // 访问网络
-    private static final String URL_ANY = "http://localhost:8365/api/any";
+    private static final String API_ANY = "http://localhost:8365/api/any";
+    private static final String API_ADDR = "http://localhost:8365/api/addr";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +63,20 @@ public class MainActivity extends AppCompatActivity {
         btnAuth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                // 前台服务权限
+                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.FOREGROUND_SERVICE)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    Log.i(TAG, "获取前台运行服务的权限");
+
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.FOREGROUND_SERVICE},
+                            101); // 这里的常量可以自定义
+                } else{
+                    Log.i(TAG, "已有前台运行服务的权限");
+                }
+
+                // 文件管理权限
                 if (!Environment.isExternalStorageManager()) {
                     Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
                     Log.i(TAG, "获取文件管理权限 package: "+ getPackageName());
@@ -88,7 +107,10 @@ public class MainActivity extends AppCompatActivity {
                     Log.i(TAG, "已完成外部文件夹访问授权");
                 }
 
-                ExecutableUtil.extractAndRunExecutable(MainActivity.this);
+                // 通过 service 来启动程序
+                Intent si = new Intent(MainActivity.this, APIService.class);
+                // startService(si);
+                startForegroundService(si);
 
                 // 按钮被点击时执行的代码
                 Toast.makeText(MainActivity.this, "完成运行程序", Toast.LENGTH_SHORT).show();
@@ -99,32 +121,37 @@ public class MainActivity extends AppCompatActivity {
         btnCheck.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                callLocalApi();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        callLocalApi(API_ANY);
+                        callLocalApi(API_ADDR);
+                    }
+                }).start();
             }
         });
     }
 
     // 访问api
-    private void callLocalApi(){
+    private void callLocalApi(String apiUrl){
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(5, TimeUnit.SECONDS) // 设置连接超时时间
                 .readTimeout(5, TimeUnit.SECONDS) // 设置读取超时时间
                 .build();
 
         Request request = new Request.Builder()
-                .url(URL_ANY)
+                .url(apiUrl)
                 .build();
-        try (Response response = client.newCall(request).execute()) {
+        try {
+            Response response = client.newCall(request).execute();
             if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
 
             // 处理响应体
             String responseBody = response.body().string();
+            Log.i(TAG, "请求返回结果: "+responseBody);
             // ... 进一步处理或解析响应 ...
-            Toast.makeText(MainActivity.this, "成功获取本地服务返回结果: " + responseBody, Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             Log.e(TAG, "请求api出错：", e);
-
-            Toast.makeText(MainActivity.this, "获取本地服务出错: " + e, Toast.LENGTH_SHORT).show();
         }
     }
     private void doSU() {
