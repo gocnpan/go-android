@@ -1,5 +1,23 @@
 # 怎么测试
 
+## 文件夹准备
+
+需要创建`/data/yz`文件夹
+```shell
+adb shell
+
+# 以 super user 身份运行
+su
+
+# 创建 /data/yz
+mkdir /data/yz
+
+# 赋予程序可执行权限
+chmod 777 -R /data/yz
+```
+
+## root相关
+
 当前项目使用 [genymotion](https://www.genymotion.com/) 虚拟机，该Android虚拟机已经Root
 
 该虚拟机不需要Magisk来管理应用的Root权限，因为应用本身可以申请Root权限(仅限已Root的系统)

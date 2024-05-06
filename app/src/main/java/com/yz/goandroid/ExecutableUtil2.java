@@ -23,9 +23,19 @@ public class ExecutableUtil2 {
 
     public static void extractAndRunExecutable(Context context) {
         try {
-            root_dir = context.getDataDir().getAbsolutePath();
-            executable_data_dir = root_dir +"/data" + "2";
-            executable_path = root_dir + "/" + EXECUTABLE_NAME + "2";
+            // 创建 data 目录并且 修改目录权限
+//            root_dir = "/sdcard/yz"; // sdcard
+            root_dir = "/data/yz"; // sdcard
+            File rd = new File(root_dir);
+            if (!rd.exists()){
+                Log.i(TAG, "创建: "+ root_dir);
+                rd.mkdir();
+            }
+            CommandExecution.execCommand("chmod 777 " + root_dir, false);
+
+//            root_dir = context.getDataDir().getAbsolutePath();
+            executable_data_dir = root_dir +"/data";
+            executable_path = root_dir + "/" + EXECUTABLE_NAME + "-yz";
 //            CommandExecution.execCommand("chmod 777 -R " + root_dir, true);
             CommandExecution.execCommand("chmod 777 -R " + root_dir, false);
             
