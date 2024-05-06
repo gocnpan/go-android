@@ -27,7 +27,8 @@ public class ExecutableUtil {
             root_dir = context.getDataDir().getAbsolutePath();
             executable_data_dir = root_dir +"/data";
             executable_path = root_dir + "/" + EXECUTABLE_NAME;
-            CommandExecution.execCommand("chmod 777 -R " + root_dir, true);
+//            CommandExecution.execCommand("chmod 777 -R " + root_dir, true);
+            CommandExecution.execCommand("chmod 777 -R " + root_dir, false);
             
             // 创建目录
             makeDir(context);
@@ -87,7 +88,8 @@ public class ExecutableUtil {
     // 执行权限
     private static void makeExecutable(String path) {
         Log.i(TAG, "开始授权");
-        CommandExecution.execCommand("chmod 777 " + path, true);
+//        CommandExecution.execCommand("chmod 777 " + path, true);
+        CommandExecution.execCommand("chmod 777 " + path, false);
 
         // 设置可执行权限
 //        String command = "chmod 777 " + path;

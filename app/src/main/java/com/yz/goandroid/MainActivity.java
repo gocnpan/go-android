@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 // 判断并获取 root 权限
-                CommandExecution.getRoot(MainActivity.this);
+//                CommandExecution.getRoot(MainActivity.this);
             }
         });
 
