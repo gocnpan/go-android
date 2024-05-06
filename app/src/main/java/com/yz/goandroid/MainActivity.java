@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     // 访问网络
     private static final String API_ANY = "http://localhost:8365/api/any";
     private static final String API_ADDR = "http://localhost:8365/api/addr";
+    private static final String API_2_ANY = "http://localhost:8821/api/any";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,6 +127,8 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         callLocalApi(API_ANY);
                         callLocalApi(API_ADDR);
+
+                        callLocalApi(API_2_ANY);
                     }
                 }).start();
             }

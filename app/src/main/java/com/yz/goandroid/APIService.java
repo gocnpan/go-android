@@ -44,6 +44,13 @@ public class APIService extends Service {
             }
         }).start();
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ExecutableUtil2.extractAndRunExecutable(ctx);
+            }
+        }).start();
+
         Log.i(TAG,"APIService -> onCreate, Thread ID: " + Thread.currentThread().getId());
     }
 
