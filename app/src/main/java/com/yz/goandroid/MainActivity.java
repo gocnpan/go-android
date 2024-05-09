@@ -38,9 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnCheck;
 
     // 访问网络
-    private static final String API_ANY = "http://localhost:8365/api/any";
-    private static final String API_ADDR = "http://localhost:8365/api/addr";
-    private static final String API_2_ANY = "http://localhost:8821/api/any";
+    private static final String API_IPFS = "http://localhost:5001/version";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 // 通过 service 来启动程序
-                Intent si = new Intent(MainActivity.this, APIService.class);
+                Intent si = new Intent(MainActivity.this, RunService.class);
                 // startService(si);
                 startForegroundService(si);
 
@@ -125,10 +123,7 @@ public class MainActivity extends AppCompatActivity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        callLocalApi(API_ANY);
-                        callLocalApi(API_ADDR);
-
-                        callLocalApi(API_2_ANY);
+                        callLocalApi(API_IPFS);
                     }
                 }).start();
             }
