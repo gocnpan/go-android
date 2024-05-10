@@ -34,13 +34,22 @@ public class RunExecutable {
 
     // 复制assets目录下的可执行文件到设备的内部存储
     public static void copyExecutableFromAssetsToInternalStorage(Context context, String executablePath, String executableName) throws IOException {
+        copyFileToStorage(context, executablePath, executableName);
+
+        // 使可执行文件具有执行权限
+        CommandExecution.execCommand("chmod 755 " + executablePath, false);
+
+        Log.i(TAG, "授予执行权限: "+executablePath);
+    }
+
+    public static  void copyFileToStorage(Context context, String path, String name) throws IOException{
         // 检查文件是否已经存在
-        File outputFile = new File(executablePath);
+        File outputFile = new File(path);
         if (!outputFile.exists()) {
             Log.i(TAG, "开始复制文件");
             // 从assets复制到内部存储
-            InputStream fis = context.getAssets().open(executableName);
-            
+            InputStream fis = context.getAssets().open(name);
+
             FileOutputStream fos = new FileOutputStream(outputFile);
             byte[] buffer = new byte[1024];
             int len;
@@ -50,12 +59,7 @@ public class RunExecutable {
             fos.flush();
             fos.close();
             fis.close();
-            Log.i(TAG,"可执行文件复制完成: " + executablePath);
-
-            // 使可执行文件具有执行权限
-            CommandExecution.execCommand("chmod 755 " + executablePath, false);
-    
-            Log.i(TAG, "授予执行权限: "+executablePath);
+            Log.i(TAG,"可执行文件复制完成: " + path);
         } else{
             Log.i(TAG, "文件已存在");
         }

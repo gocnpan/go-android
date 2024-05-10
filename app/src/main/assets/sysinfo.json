@@ -1,0 +1,14 @@
+{
+  "name": "数商有为",
+  "version": "v1.0.0",
+  "batch_number": "ssyw-sz-a0001-2024032100001",
+  "system": "android-x86_64",
+	"cpu": "-",
+	"gpu": "-",
+	"ram": "-",
+	"network_card": "-",
+  "total_freespace": "1TB",
+  "business_freespace": "500GB",
+  "private_freespace": "500GB",
+  "node_type": "Android All in One"
+}
