@@ -40,7 +40,8 @@ public class MainActivity extends AppCompatActivity {
     // 访问网络
     private static final String API_IPFS = "http://127.0.0.1:5001/version";
     private static final String API_Cluster = "http://127.0.0.1:9094/version";
-    private static final String API_EFamily = "http://127.0.0.1:8100/api/check";
+//    private static final String API_EFamily = "http://127.0.0.1:8100/api/check"; // /common/http_api
+    private static final String API_EFamily = "http://127.0.0.1:8100/api/common/http_api"; //
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

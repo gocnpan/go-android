@@ -182,8 +182,11 @@ public class RunService extends Service {
             // init
             RunExecutable.executeCommand(exePath + " init --profile=lowpower", envs);
 
+            // RunExecutable.executeCommand(exePath + " config --json API.HTTPHeaders.Access-Control-Allow-Methods '[\"PUT\", \"GET\", \"POST\"]'", envs);
+            // RunExecutable.executeCommand(exePath + " config --json API.HTTPHeaders.Access-Control-Allow-Origin '[\"http://127.0.0.1:5001\", \"http://localhost:5001\"]'", envs);
+            // 配置跨域
             RunExecutable.executeCommand(exePath + " config --json API.HTTPHeaders.Access-Control-Allow-Methods '[\"PUT\", \"GET\", \"POST\"]'", envs);
-            RunExecutable.executeCommand(exePath + " config --json API.HTTPHeaders.Access-Control-Allow-Origin '[\"http://127.0.0.1:5001\", \"http://localhost:5001\"]'", envs);
+            RunExecutable.executeCommand(exePath + " config --json API.HTTPHeaders.Access-Control-Allow-Origin '[\"*\"]'", envs);
             RunExecutable.executeCommand(exePath + " config --json Bootstrap []", envs);
             RunExecutable.executeCommand(exePath + " config --json Discovery.MDNS.Enabled false", envs);
 
@@ -227,8 +230,11 @@ public class RunService extends Service {
             ne.put("CLUSTER_REPLICATIONFACTORMAX", "3");
             ne.put("CLUSTER_DISABLEREPINNING", "false");
             ne.put("CLUSTER_SECRET", "fa6aa72ad61b6218453059a7b311999e1fd67f5d07b7db3ac7e908c9a4a47bcd");
-            ne.put("CLUSTER_RESTAPI_HTTPLISTENMULTIADDRESS", "/ip4/127.0.0.1/tcp/9094");
-            ne.put("CLUSTER_RESTAPI_CORSALLOWEDORIGINS", "[\"http://127.0.0.1:9094\", \"http://localhost:9094\"]'");
+            // ne.put("CLUSTER_RESTAPI_HTTPLISTENMULTIADDRESS", "/ip4/127.0.0.1/tcp/9094");
+            // ne.put("CLUSTER_RESTAPI_CORSALLOWEDORIGINS", "[\"http://127.0.0.1:9094\", \"http://localhost:9094\"]'");
+            // 用于压力测试
+            ne.put("CLUSTER_RESTAPI_HTTPLISTENMULTIADDRESS", "/ip4/0.0.0.0/tcp/9094");
+            ne.put("CLUSTER_RESTAPI_CORSALLOWEDORIGINS", "[\"*\"]'");
             ne.put("CLUSTER_RESTAPI_CORSALLOWEDMETHODS", "[\"PUT\", \"GET\", \"POST\"]'");
             ne.put("CLUSTER_IPFSPROXY_NODEMULTIADDRESS", "/ip4/127.0.0.1/tcp/5001");
             ne.put("CLUSTER_IPFSHTTP_NODEMULTIADDRESS", "/ip4/127.0.0.1/tcp/5001");
@@ -325,6 +331,8 @@ public class RunService extends Service {
         envs.put("OPERATOR_SERVICE_LOG_LOGINCONSOLE", "false");
         envs.put("OPERATOR_SERVICE_RELAY_SERVERADDR", "111.67.196.206:8523");
         envs.put("OPERATOR_SERVICE_RELAY_TCPTIMEOUT", "90");
+
+        envs.put("GIN_MODE", "release");
 
         String exePath = dirRoot+"/"+exeEFamily;
 
