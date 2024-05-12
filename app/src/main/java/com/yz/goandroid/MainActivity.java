@@ -127,10 +127,10 @@ public class MainActivity extends AppCompatActivity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-//                        callLocalApi(API_IPFS);
-//                        callLocalApi(API_Cluster);
-//                        callLocalApi(API_EFamily);
-                        callLocalApi(API_AndroidAddr);
+                        callLocalApi(API_IPFS);
+                        callLocalApi(API_Cluster);
+                        callLocalApi(API_EFamily);
+//                        callLocalApi(API_AndroidAddr);
                     }
                 }).start();
             }
@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
             Log.i(TAG, "请求返回结果: "+responseBody);
             // ... 进一步处理或解析响应 ...
         } catch (IOException e) {
-            Log.e(TAG, "请求api出错：", e);
+            Log.e(TAG, "请求api" + apiUrl + "出错：", e);
         }
     }
     private void doSU() {

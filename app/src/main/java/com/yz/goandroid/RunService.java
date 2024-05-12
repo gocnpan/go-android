@@ -130,38 +130,38 @@ public class RunService extends Service {
             return;
         }
 
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                runAndroid();
+//            }
+//        }).start();
+
+        // 运行 ipfs
         new Thread(new Runnable() {
             @Override
             public void run() {
-                runAndroid();
+                runIPFS();
             }
         }).start();
 
-//        // 运行 ipfs
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                runIPFS();
-//            }
-//        }).start();
-//
-//        sleep(5000); // 暂停 5 秒
-//        // 运行 ipfs cluster
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                runCluster();
-//            }
-//        }).start();
-//
-//        sleep(5000); // 暂停 5 秒
-//        // 运行 e family
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                runEFamily();
-//            }
-//        }).start();
+        sleep(5000); // 暂停 5 秒
+        // 运行 ipfs cluster
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                runCluster();
+            }
+        }).start();
+
+        sleep(5000); // 暂停 5 秒
+        // 运行 e family
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                runEFamily();
+            }
+        }).start();
     }
 
     private void runIPFS(){
