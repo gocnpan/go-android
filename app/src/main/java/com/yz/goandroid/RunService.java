@@ -34,12 +34,14 @@ public class RunService extends Service {
     private static String dirIPFS;
     private static String dirCluster;
     private static String dirEFamily;
+    private static String dirAndroid;
     private static String fileSysinfo;
 
     // 文件名 这里用变量而不是常量是因为后续根据系统架构会有不同的程序名
     private static String exeIPFS = "ipfs.x86_64";
     private static String exeCluster = "cluster.x86_64";
     private static String exeEFamily = "e-family.x86_64";
+    private static String exeAndroid = "android.x86_64";
     private  static String sysinfo = "sysinfo.json";
 
     @Override
@@ -115,6 +117,8 @@ public class RunService extends Service {
         makeDir(dirCluster);
         dirEFamily = dirData + "/e-family";
         makeDir(dirEFamily);
+        dirAndroid = dirData + "/android";
+        makeDir(dirAndroid);
 
         // 准备 sysinfo.json 文件
         fileSysinfo = dirData + "/" + sysinfo;
@@ -126,31 +130,38 @@ public class RunService extends Service {
             return;
         }
 
-        // 运行 ipfs
         new Thread(new Runnable() {
             @Override
             public void run() {
-                runIPFS();
+                runAndroid();
             }
         }).start();
 
-        sleep(5000); // 暂停 5 秒
-        // 运行 ipfs cluster
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                runCluster();
-            }
-        }).start();
-
-        sleep(5000); // 暂停 5 秒
-        // 运行 e family
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                runEFamily();
-            }
-        }).start();
+//        // 运行 ipfs
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                runIPFS();
+//            }
+//        }).start();
+//
+//        sleep(5000); // 暂停 5 秒
+//        // 运行 ipfs cluster
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                runCluster();
+//            }
+//        }).start();
+//
+//        sleep(5000); // 暂停 5 秒
+//        // 运行 e family
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                runEFamily();
+//            }
+//        }).start();
     }
 
     private void runIPFS(){
@@ -187,6 +198,8 @@ public class RunService extends Service {
             // 配置跨域
             RunExecutable.executeCommand(exePath + " config --json API.HTTPHeaders.Access-Control-Allow-Methods '[\"PUT\", \"GET\", \"POST\"]'", envs);
             RunExecutable.executeCommand(exePath + " config --json API.HTTPHeaders.Access-Control-Allow-Origin '[\"*\"]'", envs);
+            RunExecutable.executeCommand(exePath + " config --json Addresses.API '[\"/ip4/0.0.0.0/tcp/5001\"]'", envs);
+
             RunExecutable.executeCommand(exePath + " config --json Bootstrap []", envs);
             RunExecutable.executeCommand(exePath + " config --json Discovery.MDNS.Enabled false", envs);
 
@@ -235,6 +248,7 @@ public class RunService extends Service {
             // 用于压力测试
             ne.put("CLUSTER_RESTAPI_HTTPLISTENMULTIADDRESS", "/ip4/0.0.0.0/tcp/9094");
             ne.put("CLUSTER_RESTAPI_CORSALLOWEDORIGINS", "[\"*\"]'");
+
             ne.put("CLUSTER_RESTAPI_CORSALLOWEDMETHODS", "[\"PUT\", \"GET\", \"POST\"]'");
             ne.put("CLUSTER_IPFSPROXY_NODEMULTIADDRESS", "/ip4/127.0.0.1/tcp/5001");
             ne.put("CLUSTER_IPFSHTTP_NODEMULTIADDRESS", "/ip4/127.0.0.1/tcp/5001");
@@ -347,6 +361,20 @@ public class RunService extends Service {
             RunExecutable.executeCommand(exePath + " daemon", envs);
         }catch (IOException | InterruptedException e){
             Log.e(TAG, "启动 e-family 出错" + e);
+        }
+    }
+
+    private void runAndroid(){
+        Map<String, String> envs = new HashMap<String, String>();
+        envs.put("AP_NDK_BASE_DIR", dirAndroid);
+
+        String exePath = dirRoot+"/"+exeAndroid;
+
+        try {
+            RunExecutable.copyExecutableFromAssetsToInternalStorage(this, exePath, exeAndroid);
+            RunExecutable.executeCommand(exePath, envs);
+        } catch (IOException | InterruptedException e){
+            Log.e(TAG, "执行Android出错" + e);
         }
     }
 

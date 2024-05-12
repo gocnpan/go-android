@@ -1,5 +1,38 @@
 # 怎么测试
 
+## 压力测试(rest api)
+
+genymotion 模拟器需要配置为`Bridge`
+
+查看试试资源消耗:
+```shell
+adb shell
+
+# 使用这个可以看到全局资源消耗
+top
+
+# 不建议使用这个命令行，因为压测测的是后端服务
+top -d 1 | grep com.yz.goandroid
+```
+- PID 表示进程号
+- USER 表示进程所属用户组
+- PR 进程的优先级，值越小，优先级越高
+- NI 进程的nice值，决定了CPU调度优先级，值越小，优先级越高
+- VIRT 进程使用的虚拟内存大小
+- RES 进程使用的实际物理内存大小
+- SHR 被多个进程共享的内存大小
+- S 进程的状态，包括R（运行态）、S（睡眠态）、Z（僵尸态）等
+- %CPU 进程当前的CPU占用率，很可能超过100%，存在多核的情况
+- %MEM 进程当前的内存占用率
+- TIME+ 进程自启动以来运行的时间
+- ARGS 进程的包名，或者说叫进程名
+
+压测软件[go-stress-testing](https://github.com/link1st/go-stress-testing)
+```shell
+# 其中 ip 地址与 端口是需要
+./go-stress-testing-win.exe -c 1 -n 10000 -u http://192.168.0.14:8365/api/any
+```
+
 ## 文件夹准备
 
 需要创建`/data/yz`文件夹
