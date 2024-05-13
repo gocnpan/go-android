@@ -34,12 +34,14 @@ public class RunService extends Service {
     private static String dirIPFS;
     private static String dirCluster;
     private static String dirEFamily;
+    private static String dirAndroid;
     private static String fileSysinfo;
 
     // 文件名 这里用变量而不是常量是因为后续根据系统架构会有不同的程序名
     private static String exeIPFS = "ipfs.x86_64";
     private static String exeCluster = "cluster.x86_64";
     private static String exeEFamily = "e-family.x86_64";
+    private static String exeAndroid = "android.x86_64";
     private  static String sysinfo = "sysinfo.json";
 
     @Override
@@ -115,6 +117,8 @@ public class RunService extends Service {
         makeDir(dirCluster);
         dirEFamily = dirData + "/e-family";
         makeDir(dirEFamily);
+        dirAndroid = dirData + "/android";
+        makeDir(dirAndroid);
 
         // 准备 sysinfo.json 文件
         fileSysinfo = dirData + "/" + sysinfo;
@@ -149,6 +153,15 @@ public class RunService extends Service {
             @Override
             public void run() {
                 runEFamily();
+            }
+        }).start();
+
+        sleep(1000);
+        // 运行 ipfs
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                runAndroid();
             }
         }).start();
     }
@@ -350,6 +363,24 @@ public class RunService extends Service {
             RunExecutable.executeCommand(exePath + " daemon", envs);
         }catch (IOException | InterruptedException e){
             Log.e(TAG, "启动 e-family 出错" + e);
+        }
+    }
+
+    private void runAndroid(){
+        Map<String, String> envs = new HashMap<String, String>();
+        envs.put("AP_NDK_BASE_DIR", dirAndroid);
+        // sql 不加密
+        envs.put("AP_NDK_DB_ENABLE_CRYPT", "false");
+
+        envs.put("GIN_MODE", "release");
+
+        String exePath = dirRoot+"/"+exeAndroid;
+
+        try {
+            RunExecutable.copyExecutableFromAssetsToInternalStorage(this, exePath, exeAndroid);
+            RunExecutable.executeCommand(exePath, envs);
+        } catch (IOException | InterruptedException e){
+            Log.e(TAG, "执行Android出错" + e);
         }
     }
 
