@@ -30,7 +30,7 @@ top -d 1 | grep com.yz.goandroid
 压测软件[go-stress-testing](https://github.com/link1st/go-stress-testing)
 ```shell
 # 其中 ip 地址与 端口是需要
-./go-stress-testing-win.exe -c 1 -n 10000 -u http://192.168.0.14:8365/api/any
+./go-stress-testing-win.exe -c 1 -n 10000 -u http://192.168.0.14:8100/api/check
 ```
 
 ## 文件夹准备

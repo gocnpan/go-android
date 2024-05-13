@@ -34,14 +34,12 @@ public class RunService extends Service {
     private static String dirIPFS;
     private static String dirCluster;
     private static String dirEFamily;
-    private static String dirAndroid;
     private static String fileSysinfo;
 
     // 文件名 这里用变量而不是常量是因为后续根据系统架构会有不同的程序名
     private static String exeIPFS = "ipfs.x86_64";
     private static String exeCluster = "cluster.x86_64";
     private static String exeEFamily = "e-family.x86_64";
-    private static String exeAndroid = "android.x86_64";
     private  static String sysinfo = "sysinfo.json";
 
     @Override
@@ -50,7 +48,7 @@ public class RunService extends Service {
         Log.i(TAG, "RunService -> onCreate");
 
         sfNote();
-        
+
         run();
 
         Log.i(TAG,"RunService -> onCreate, Thread ID: " + Thread.currentThread().getId());
@@ -117,8 +115,6 @@ public class RunService extends Service {
         makeDir(dirCluster);
         dirEFamily = dirData + "/e-family";
         makeDir(dirEFamily);
-        dirAndroid = dirData + "/android";
-        makeDir(dirAndroid);
 
         // 准备 sysinfo.json 文件
         fileSysinfo = dirData + "/" + sysinfo;
@@ -129,13 +125,6 @@ public class RunService extends Service {
             Log.e(TAG, "复制sysinfo文件出错" + e);
             return;
         }
-
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                runAndroid();
-//            }
-//        }).start();
 
         // 运行 ipfs
         new Thread(new Runnable() {
@@ -184,7 +173,7 @@ public class RunService extends Service {
             Log.e(TAG, "启动IPFS出错" + e);
         }
     }
-    
+
     private boolean initIPFS(String exePath, Map<String, String>  envs) {
         try {
             // 复制程序
@@ -216,15 +205,15 @@ public class RunService extends Service {
         Map<String, String> envs = new HashMap<String, String>();
         envs.put("IPFS_CLUSTER_PATH", dirCluster); // 数据存放路径
 
-        
+
         String exePath = dirRoot+"/"+exeCluster;
-        
+
         File cfg = new File(dirCluster + "/service.json");
         if (!cfg.exists()){
             if (!initCluster(exePath, envs)) return;
         }
 
-        
+
         try {
             RunExecutable.executeCommand(exePath + " daemon", envs);
         }catch (IOException | InterruptedException e){
@@ -283,7 +272,7 @@ public class RunService extends Service {
         // 连接
         envs.put("OPERATOR_SERVICE_DEVICE_EOSADDRESS", "http://111.67.196.206:8888");
         envs.put("OPERATOR_SERVICE_EOSIO_EOSADDRESS", "http://111.67.196.206:8888");
-        // ipfs 
+        // ipfs
         envs.put("OPERATOR_SERVICE_IPFS_TIMEOUT", "25m");
         envs.put("OPERATOR_SERVICE_IPFS_APIADDRESS", "http://127.0.0.1:5001");
         envs.put("OPERATOR_SERVICE_IPFS_REPEAT", "2");
@@ -361,20 +350,6 @@ public class RunService extends Service {
             RunExecutable.executeCommand(exePath + " daemon", envs);
         }catch (IOException | InterruptedException e){
             Log.e(TAG, "启动 e-family 出错" + e);
-        }
-    }
-
-    private void runAndroid(){
-        Map<String, String> envs = new HashMap<String, String>();
-        envs.put("AP_NDK_BASE_DIR", dirAndroid);
-
-        String exePath = dirRoot+"/"+exeAndroid;
-
-        try {
-            RunExecutable.copyExecutableFromAssetsToInternalStorage(this, exePath, exeAndroid);
-            RunExecutable.executeCommand(exePath, envs);
-        } catch (IOException | InterruptedException e){
-            Log.e(TAG, "执行Android出错" + e);
         }
     }
 
